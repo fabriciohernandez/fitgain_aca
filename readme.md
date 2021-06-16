@@ -1,3 +1,7 @@
+# Sobre el proyecto
+
+Este proyecto a sido tomado de la materia de PDM con el fin de reparar errores y agregar nuevas funcionalidades. 
+
 # Detalle de implementación
 
 Para utilizar el proyecto no es necesario instalar nada externo, lo único a mencionar es que probablemente no funcione la autenticación con google y facebook ya que se utiliza una firma digital (SHA-1) y es previamente agregada a las permitidas.
