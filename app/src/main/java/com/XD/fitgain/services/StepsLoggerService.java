@@ -51,7 +51,7 @@ public class StepsLoggerService extends Service implements SensorEventListener {
 
             MagnitudePrevious = Magnitude;
 
-            if (MagnitudeDelta > 5) {
+            if (MagnitudeDelta > 4) {
                 stepCount++;
             }
 

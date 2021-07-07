@@ -13,9 +13,9 @@ data class User(
     var genero: String = "",
     var height: Double = 1.0,
     var photoUrl: String = "",
-    var points: Int = 0,
+    var points: Double = 0.0,
     var weight: Double = 1.0,
     var goalStep: Int = 1000,
-    var currentStep: Double = 0.0
+    var currentStep: Int = 0
 
 ): Parcelable

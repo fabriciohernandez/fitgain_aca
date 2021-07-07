@@ -27,16 +27,12 @@ class Activity : Fragment() {
     private lateinit var binding: FragmentActivityBinding
 
     private var currentSteps = 0
-    private var previousSteps = 0
-    private var totalSteps = 0
     private var totalDistance = 0.0
-
-    private var points = 0.0
 
     private val firebaseRepo: Repo = Repo()
 
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
-    private lateinit var currentUser: com.XD.fitgain.model.User
+    private lateinit var currentUser: User
 
     private val firebaseFirestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
@@ -53,8 +49,6 @@ class Activity : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentActivityBinding.inflate(inflater, container, false)
-
-
 
         binding.btnInfo.setOnClickListener {
             AlertDialogUtility.alertDialog(
@@ -84,19 +78,12 @@ class Activity : Fragment() {
     }
 
     override fun onDestroy() {
+        saveDataInFirebase()
         super.onDestroy()
-        saveData()
     }
 
-    private fun saveData() {
-        var sharedPreferences: SharedPreferences =
-            requireActivity().getSharedPreferences("FitnessData", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.clear()
-        editor.putInt("stepCount", totalSteps)
-        editor.apply()
-
-        val data = hashMapOf("points" to points)
+    private fun saveDataInFirebase() {
+        val data = hashMapOf("points" to currentUser.points, "currentStep" to currentUser.currentStep)
         firebaseFirestore.collection("Usuarios").document(currentUser.uid.trim()).set(
             data,
             SetOptions.merge()
@@ -112,33 +99,41 @@ class Activity : Fragment() {
     }
 
     private fun loadData() {
-        val sharedPreferences: SharedPreferences =
-            requireActivity().getSharedPreferences("FitnessData", MODE_PRIVATE)
-        previousSteps = sharedPreferences.getInt("stepCount", 0)
-        totalSteps = previousSteps + currentSteps
+        currentUser.currentStep += currentSteps
 
+        setDistanceView()
+        setStepsView()
+        setCaloriesView()
+        setPointsView()
+
+    }
+
+    private fun setDistanceView(){
         //Distance setting values
-        totalDistance = (totalSteps * 0.71777203560149) / 1000
+        totalDistance = (currentUser.currentStep * 0.71777203560149) / 1000
         tv_disValue.text = String.format("%.2f", totalDistance) + " Km"
         pgb_distance.apply {
             setProgressWithAnimation(totalDistance.toFloat())
         }
+    }
 
+    private fun setStepsView(){
         //Steps setting values
-        tv_steps.text = totalSteps.toString()
+        tv_steps.text = currentUser.currentStep.toString()
         progress_circular.apply {
-            setProgressWithAnimation(totalSteps.toFloat())
+            setProgressWithAnimation(currentUser.currentStep.toFloat())
         }
 
         progress_circular.progressMax = currentUser.goalStep.toFloat()
 
         //Goal setting value
-        var goal = currentUser.goalStep
         tv_percentage_steps.text = String.format(
             "%.2f",
-            (totalSteps.toFloat() / goal.toFloat()) * 100
+            (currentUser.currentStep.toFloat() / currentUser.goalStep.toFloat()) * 100
         ) + " % de tu meta diaria"
+    }
 
+    private fun setCaloriesView(){
         //Calories Burned
         var weight = currentUser.weight//kg
         var height = (currentUser.height / 100).pow(2) //m al cuadrado
@@ -147,7 +142,7 @@ class Activity : Fragment() {
         var age = currentUser.edad
         var speedFactor = 3.0 //average for walk
 
-        var caloriesBurned = (totalSteps * 0.04 * bmi * age * speedFactor) / 1000
+        var caloriesBurned = (currentUser.currentStep * 0.04 * bmi * age * speedFactor) / 1000
 
         tv_calValue.text = String.format(
             "%.2f",
@@ -157,23 +152,24 @@ class Activity : Fragment() {
         pgb_calories.apply {
             setProgressWithAnimation(caloriesBurned.toFloat())
         }
+    }
 
+    private fun setPointsView(){
         //Points conversion
-        points = 0.001 * totalSteps
+        currentUser.points = 0.001 * currentUser.currentStep
         tv_poinstValue.text = String.format(
             "%.2f",
-            points
+            currentUser.points,
         ) + " PS"
 
         tv_pointsInfo.text = String.format(
             "%.0f",
-            points
+            currentUser.points
         )
 
         pgb_limitedPoints.apply {
-            setProgressWithAnimation(points.toFloat())
+            setProgressWithAnimation(currentUser.points.toFloat())
         }
-
     }
 
     private fun getIntentFilter(): IntentFilter {
