@@ -12,5 +12,7 @@ data class Busines(
     val categoria: String = "",
     val photoUrl: String = "",
     val createdAt: Timestamp? = null,
-    val updatedAt: Timestamp? = null
+    val updatedAt: Timestamp? = null,
+    val latitud:String = "",
+    val longitud:String = ""
 ): Parcelable

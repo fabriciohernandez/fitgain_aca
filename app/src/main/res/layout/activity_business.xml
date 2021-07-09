@@ -18,6 +18,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/btn_mapView"
+        android:layout_width="200dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/rounded_button"
+        android:backgroundTint="#673AB7"
+        android:fontFamily="@font/poppins_semibold"
+        android:text="Ver en mapa"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/photo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <ImageView
         android:id="@+id/btn_backScreen"
         android:layout_width="wrap_content"
@@ -103,6 +117,7 @@
                         <include layout="@layout/category_shimmer" />
 
                         <include layout="@layout/category_shimmer" />
+
                     </LinearLayout>
                 </com.facebook.shimmer.ShimmerFrameLayout>
 
@@ -110,11 +125,14 @@
                     android:id="@+id/recyclerViewPromo"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="4dp"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/promo_shimmer"
-                    tools:listitem="@layout/category_recycler_style" />
+                    tools:listitem="@layout/category_recycler_style">
+
+                </androidx.recyclerview.widget.RecyclerView>
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
