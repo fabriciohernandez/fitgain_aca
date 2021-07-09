@@ -44,7 +44,7 @@ class Home : Fragment() {
     private fun setViewData() {
         Glide.with(this).load(currentUser.photoUrl).into(binding.imgProfile)
         binding.tvUsuario.text = "¡Hola! ${currentUser.nombre}"
-        binding.tvPoints.text = currentUser.points.toString()
+        binding.tvPoints.text = "%.2f".format(currentUser.points)
         binding.tvAltura.text = "${currentUser.height} cm"
         binding.tvPeso.text = "${currentUser.weight} kg"
         binding.tvMetapasos.text = currentUser.goalStep.toString()

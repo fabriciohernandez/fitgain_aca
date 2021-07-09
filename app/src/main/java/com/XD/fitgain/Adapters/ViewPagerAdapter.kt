@@ -1,10 +1,7 @@
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.XD.fitgain.views.fragments.Activity
-import com.XD.fitgain.views.fragments.Discover
-import com.XD.fitgain.views.fragments.Home
-import com.XD.fitgain.views.fragments.Profile
+import com.XD.fitgain.views.fragments.*
 
 internal class PagerViewAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm!!) {
     override fun getItem(position: Int): Fragment {
@@ -19,6 +16,9 @@ internal class PagerViewAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm!
                 Activity()
             }
             3 -> {
+                Cupons()
+            }
+            4 -> {
                 Profile()
             }
             else -> Home()
@@ -26,7 +26,7 @@ internal class PagerViewAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm!
     }
 
     override fun getCount(): Int {
-        return 4
+        return 5
     }
 
 }

@@ -25,7 +25,7 @@ class NavigationContainerHome : AppCompatActivity() {
 
         mPagerAdapter = PagerViewAdapter(supportFragmentManager)
         binding.viewPager.adapter = mPagerAdapter
-        binding.viewPager.offscreenPageLimit = 4
+        binding.viewPager.offscreenPageLimit = 5
 
         binding.viewPager.currentItem = 0
 
@@ -34,7 +34,8 @@ class NavigationContainerHome : AppCompatActivity() {
                 R.id.home -> binding.viewPager.currentItem = 0
                 R.id.bussines -> binding.viewPager.currentItem = 1
                 R.id.Activity -> binding.viewPager.currentItem = 2
-                R.id.Account -> binding.viewPager.currentItem = 3
+                R.id.Cupons -> binding.viewPager.currentItem = 3
+                R.id.Account -> binding.viewPager.currentItem = 4
             }
         }
     }

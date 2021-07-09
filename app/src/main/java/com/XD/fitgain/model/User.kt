@@ -16,6 +16,7 @@ data class User(
     var points: Double = 0.0,
     var weight: Double = 1.0,
     var goalStep: Int = 1000,
-    var currentStep: Int = 0
+    var currentStep: Int = 0,
+    var redeemedCoupons: List<Promo> = listOf()
 
 ): Parcelable

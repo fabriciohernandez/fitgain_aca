@@ -163,7 +163,7 @@ class Activity : Fragment() {
         ) + " PS"
 
         tv_pointsInfo.text = String.format(
-            "%.0f",
+            "%.1f",
             currentUser.points
         )
 

@@ -22,9 +22,17 @@
         app:cnb_iconColor="@android:color/white"/>
 
     <item
+        android:id="@+id/Cupons"
+        android:icon="@drawable/ic_gift"
+        android:title="Cupones"
+        app:cnb_iconColor="@android:color/white"/>
+
+    <item
         android:id="@+id/Account"
         android:icon="@drawable/ic_user"
         android:title="Cuenta"
         app:cnb_iconColor="@android:color/white"/>
+
+
 
 </menu>

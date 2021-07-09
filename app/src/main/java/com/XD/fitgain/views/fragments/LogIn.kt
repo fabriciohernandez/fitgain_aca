@@ -51,8 +51,6 @@ class LogIn : Fragment() {
     ): View? {
         binding = FragmentLogInBinding.inflate(inflater, container, false)
 
-        //getHash()
-
         binding.btnBackScreen.setOnClickListener {
             it.findNavController().navigate(R.id.action_logIn_to_logOut)
         }
