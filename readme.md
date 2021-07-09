@@ -13,6 +13,8 @@ Para ingresar a la aplicacion basta con colocar las siguiente credenciales:
 correo: fitgaindev@gmail.com
 contraseña: 12345678
 
+![alt text](https://github.com/fabriciohernandez/fitgain_aca/blob/main/github%20images/github_image_2.png?raw=true)
+
 Es un usuario de demostración o puedes crear el tuyo.
 
 # Herramientas utilizadas
@@ -23,9 +25,7 @@ Es un usuario de demostración o puedes crear el tuyo.
   - Sensores
 
 ## Contribución
-Los cambios son bienvenidos y para ello crea un nuevo issue, se discutirá lo que tengas planeado cambiar :).
-
-Please make sure to update tests as appropriate.
+Los cambios son bienvenidos y para ello crea un nuevo issue, se discutirá lo que tengas planeado cambiar ❤
 
 ## Licencia
 [MIT](https://choosealicense.com/licenses/mit/)
