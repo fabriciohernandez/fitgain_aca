@@ -1,16 +1,17 @@
 package com.XD.fitgain.views
+
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
-import android.location.Location
+
 import android.os.Bundle
 import android.util.Log
+
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.XD.fitgain.R
 import com.XD.fitgain.databinding.ActivityBusinessBinding
 import com.XD.fitgain.model.Busines
@@ -25,7 +26,9 @@ import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.Mapbox
-import com.mapbox.mapboxsdk.location.LocationComponent
+import com.mapbox.mapboxsdk.camera.CameraPosition
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
+import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
 import com.mapbox.mapboxsdk.location.LocationComponentOptions
 import com.mapbox.mapboxsdk.location.modes.CameraMode
@@ -36,6 +39,7 @@ import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
+import com.mapbox.mapboxsdk.utils.BitmapUtils
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute
 import kotlinx.android.synthetic.main.activity_map_view.*
@@ -48,9 +52,13 @@ class MapViewActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsList
 
     private lateinit var busines: Busines
     private lateinit var binding: ActivityBusinessBinding
+
     private var currentRoute: DirectionsRoute? = null
     private var navigationMapRoute: NavigationMapRoute? = null
-    private val TAG = "DirectionsActivity"
+
+
+    lateinit var originPoint: Point
+    lateinit var destinationPoint: Point
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -65,6 +73,7 @@ class MapViewActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsList
         setContentView(R.layout.activity_map_view)
 
         getDataFromIntent()
+
 
         binding = ActivityBusinessBinding.inflate(layoutInflater)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -82,55 +91,52 @@ class MapViewActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsList
             enableLocationComponent(it)
             addDestinationIconSymbolLayer(it)
 
-            Log.d("busines",busines.latitud.toDouble().toString())
-
-
 
         }
 
     }
 
     private fun addDestinationIconSymbolLayer(it: Style) {
-        it.addImage("destination-icon-id",BitmapFactory.decodeResource(this.resources,R.drawable.mapbox_marker_icon_default))
-        var geoJsonSource:GeoJsonSource = GeoJsonSource("destination-source-id")
+        if(busines.categoria == "Tecnologia") {
+            val drawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_laptop_screen, null)
+            val bitmapUtils = BitmapUtils.getBitmapFromDrawable(drawable)
+            it.addImage(
+                "destination-icon-id",
+                bitmapUtils!!
+            )
+        }
+        if (busines.categoria == "Restaurantes"){
+            val drawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_cutlery, null)
+            val bitmapUtils = BitmapUtils.getBitmapFromDrawable(drawable)
+            it.addImage(
+                "destination-icon-id",
+                bitmapUtils!!
+            )
+        }
+        var geoJsonSource: GeoJsonSource = GeoJsonSource("destination-source-id")
         it.addSource(geoJsonSource)
 
-        var destinationSymbolLayer : SymbolLayer = SymbolLayer("destination-symbol-layer-id","destination-source-id")
-        destinationSymbolLayer.withProperties(iconImage("destination-icon-id"),
+        var destinationSymbolLayer: SymbolLayer =
+            SymbolLayer("destination-symbol-layer-id", "destination-source-id")
+        destinationSymbolLayer.withProperties(
+            iconImage("destination-icon-id"),
             iconAllowOverlap(true),
-            iconIgnorePlacement(true))
+            iconIgnorePlacement(true),
+            iconAnchor(com.mapbox.mapboxsdk.style.layers.Property.ICON_ANCHOR_BOTTOM),
+            iconOffset(arrayOf(0f, -16f)),
+            textField(busines.nombre),
+            textAnchor(com.mapbox.mapboxsdk.style.layers.Property.TEXT_ANCHOR_BOTTOM),
+        )
         it.addLayer(destinationSymbolLayer)
-        var destinationPoint = Point.fromLngLat( busines.longitud.toDouble(),busines.latitud.toDouble())
-        lateinit var originPoint:Point
-        //Get Current Location
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
-        }
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location : Location? ->
-                // Got last known location. In some rare situations this can be null.
-                Log.d("lastLocation", "location..." + location?.latitude.toString())
-                originPoint = Point.fromLngLat(location!!.longitude,location!!.latitude)
-            }
-
+        destinationPoint = Point.fromLngLat(busines.longitud.toDouble(), busines.latitud.toDouble())
         val source = map!!.style!!.getSourceAs<GeoJsonSource>("destination-source-id")
         source?.setGeoJson(Feature.fromGeometry(destinationPoint))
-        
-        //getRoute(originPoint,destinationPoint)
+        map!!.animateCamera(
+            CameraUpdateFactory.newCameraPosition(
+                CameraPosition.Builder()
+            .target(LatLng(destinationPoint.latitude(),destinationPoint.longitude()))
+            .zoom(16.0)
+            .build()), 4000)
 
     }
 
@@ -141,13 +147,19 @@ class MapViewActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsList
             .destination(destinationPoint)
             .build()
             .getRoute(object : retrofit2.Callback<DirectionsResponse> {
-                override fun onResponse(call: retrofit2.Call<DirectionsResponse>, response: retrofit2.Response<DirectionsResponse>) { Log.d(TAG, "Response code: " + response.body())
+                override fun onResponse(
+                    call: retrofit2.Call<DirectionsResponse>,
+                    response: retrofit2.Response<DirectionsResponse>
+                ) {
+                    Log.d("Route", "Response code: " + response.body())
                     if (response.body() == null) {
-                        Log.d(TAG, "No routes found, make sure you set the right user and access token")
+                        Log.d(
+                            "Route",
+                            "No routes found, make sure you set the right user and access token"
+                        )
                         return
-                    }
-                    else if (response.body()!!.routes().size < 1){
-                        Log.e(TAG, "No routes found")
+                    } else if (response.body()!!.routes().size < 1) {
+                        Log.e("Route", "No routes found")
                         return
                     }
                     currentRoute = response.body()!!.routes()[0]
@@ -155,15 +167,15 @@ class MapViewActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsList
                     //Draw the route on the map
                     if (navigationMapRoute != null) {
                         navigationMapRoute!!.updateRouteVisibilityTo(false)
-                    }
-                    else {
-                        navigationMapRoute = NavigationMapRoute(null, mapView, map!!, R.style.NavigationMapRoute)
+                    } else {
+                        navigationMapRoute =
+                            NavigationMapRoute(null, mapView, map!!, R.style.NavigationMapRoute)
                     }
                     navigationMapRoute!!.addRoute(currentRoute)
                 }
 
                 override fun onFailure(call: retrofit2.Call<DirectionsResponse>, t: Throwable) {
-                    Log.e(TAG, "Error: " + t.message)
+                    Log.e("Route", "Error: " + t.message)
                 }
 
 
@@ -188,17 +200,20 @@ class MapViewActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsList
                 .accuracyColor(ContextCompat.getColor(this, R.color.mapboxGreen))
                 .build()
 
-            val locationComponentActivationOptions = LocationComponentActivationOptions.builder(this, loadedMapStyle)
-                .locationComponentOptions(customLocationComponentOptions)
-                .useDefaultLocationEngine(true)
-                .locationEngineRequest( LocationEngineRequest.Builder(750)
-                    .setFastestInterval(750)
-                    .setPriority(LocationEngineRequest.PRIORITY_HIGH_ACCURACY)
-                    .build())
-                .build()
+            val locationComponentActivationOptions =
+                LocationComponentActivationOptions.builder(this, loadedMapStyle)
+                    .locationComponentOptions(customLocationComponentOptions)
+                    .useDefaultLocationEngine(true)
+                    .locationEngineRequest(
+                        LocationEngineRequest.Builder(750)
+                            .setFastestInterval(750)
+                            .setPriority(LocationEngineRequest.PRIORITY_HIGH_ACCURACY)
+                            .build()
+                    )
+                    .build()
 
             // Get an instance of the LocationComponent and then adjust its settings
-             map.locationComponent.apply {
+            map.locationComponent.apply {
 
                 // Activate the LocationComponent with options
                 activateLocationComponent(locationComponentActivationOptions)
@@ -211,7 +226,7 @@ class MapViewActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsList
 
                 // Set the LocationComponent's render mode
                 renderMode = RenderMode.COMPASS
-             }
+            }
 
         } else {
             permissionsManager = PermissionsManager(this)
@@ -219,23 +234,47 @@ class MapViewActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsList
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     override fun onExplanationNeeded(permissionsToExplain: List<String>) {
-        Toast.makeText(this, R.string.user_location_permission_explanation, Toast.LENGTH_LONG).show()
+        Toast.makeText(this, R.string.user_location_permission_explanation, Toast.LENGTH_LONG)
+            .show()
     }
-    fun btnBackClick(v:View){
+
+    fun btnBackClick(v: View) {
         finish();
     }
+
+    fun btnRouteClick(v: View) {
+        originPoint = Point.fromLngLat(
+            map.locationComponent!!.lastKnownLocation!!.longitude,
+            map.locationComponent!!.lastKnownLocation!!.latitude
+        )
+        Log.d("lastLocation", "location..." + originPoint?.latitude().toString())
+        getRoute(originPoint, destinationPoint)
+        map!!.animateCamera(
+            CameraUpdateFactory.newCameraPosition(
+                CameraPosition.Builder()
+                    .target(LatLng(originPoint.latitude(),originPoint.longitude()))
+                    .zoom(16.0)
+                    .build()), 20000)
+        map.locationComponent.cameraMode = CameraMode.TRACKING
+    }
+
 
     override fun onPermissionResult(granted: Boolean) {
         if (granted) {
             enableLocationComponent(map.style!!)
         } else {
-            Toast.makeText(this, R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show()
+            Toast.makeText(this, R.string.user_location_permission_not_granted, Toast.LENGTH_LONG)
+                .show()
             finish()
         }
     }
@@ -274,6 +313,7 @@ class MapViewActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsList
         super.onLowMemory()
         mapView.onLowMemory()
     }
+
 
 }
 
