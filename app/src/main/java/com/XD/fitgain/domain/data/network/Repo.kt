@@ -10,10 +10,10 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 
 class Repo {
+    //Firestore
     private val firebaseFirestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
-
-    //Firestore
+    //Obtiene la lista de todos los negocios regitrados en la plataforma
     fun getBusinessList(nombreCategoria: String): Task<QuerySnapshot> {
         return firebaseFirestore
             .collection("Negocios")
@@ -22,6 +22,7 @@ class Repo {
             .get()
     }
 
+    //Obtiene la lista de todos los cupones
     fun getPromoList(negocioUid: String): Task<QuerySnapshot> {
         Log.d("PROMO_FETCH", negocioUid)
         return firebaseFirestore
@@ -30,6 +31,8 @@ class Repo {
             .get()
     }
 
+    //Dado un usuario de firebase me obtiene el usuario almacenado en firestore con el modelo
+    //de kotlin
     fun getUserData(currentUser : FirebaseUser): Task<DocumentSnapshot> {
         return firebaseFirestore
             .collection("Usuarios")

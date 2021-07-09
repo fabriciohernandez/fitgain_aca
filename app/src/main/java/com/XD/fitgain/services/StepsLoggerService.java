@@ -11,6 +11,11 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+//Este es el servicio que se encarga de obtener los pasos del usuario haciendo uso de los sensores
+//del dispositivo (aceleracion en x,y,z). Para saber si ha realizado un paso se obtiene la magnitud
+//de los componentes en x,y,z luego se comprar con una constante de tolerancia que en nuestro caso
+//hemos colocado 4, entre menos sea mas sensible sera al detectar los pasos.
+
 public class StepsLoggerService extends Service implements SensorEventListener {
     private static final String DEBUG_TAG = "StepsLoggerService";
 
@@ -23,7 +28,6 @@ public class StepsLoggerService extends Service implements SensorEventListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        //Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(this, sensor,

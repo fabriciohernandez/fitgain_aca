@@ -12,6 +12,8 @@ import kotlinx.android.synthetic.main.dialog_layout.view.*
 class AlertDialogUtility {
 
     companion object {
+        //Se crea un alert dialog personalizado en donde se puede variar la animacion y
+        //el texto presente
         fun alertDialog(context: Context, alertText: String, animNumber: Int) {
             val layoutBuilder = LayoutInflater.from(context).inflate(R.layout.dialog_layout, null)
             val builder: AlertDialog.Builder = AlertDialog.Builder(context).setView(layoutBuilder)
@@ -24,7 +26,6 @@ class AlertDialogUtility {
             }
             layoutBuilder.lottie_anim.playAnimation()
             layoutBuilder.btn_ok.setOnClickListener {
-                //Toast.makeText(context, "Ok Bye "/* + layoutBuilder.et_name.text.toString()*/, Toast.LENGTH_SHORT).show()
                 alertDialog.dismiss()
             }
         }
