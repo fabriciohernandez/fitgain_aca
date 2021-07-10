@@ -17,6 +17,6 @@ data class User(
     var weight: Double = 1.0,
     var goalStep: Int = 1000,
     var currentStep: Int = 0,
-    var redeemedCoupons: List<Promo> = listOf()
+    var redeemedCoupons: MutableList<Promo> = mutableListOf<Promo>()
 
 ): Parcelable

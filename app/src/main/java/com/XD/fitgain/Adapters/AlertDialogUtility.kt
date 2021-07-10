@@ -1,13 +1,12 @@
 package com.XD.fitgain.adapters
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.XD.fitgain.R
 import kotlinx.android.synthetic.main.dialog_layout.view.*
+import kotlinx.android.synthetic.main.fragment_log_in.view.*
+import android.os.Handler
 
 class AlertDialogUtility {
 
