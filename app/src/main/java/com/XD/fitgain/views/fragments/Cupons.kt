@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.XD.fitgain.adapters.AlertDialogUtility
 import com.XD.fitgain.adapters.RecyclerPromoAdapter
 import com.XD.fitgain.databinding.FragmentCuponsBinding
-import com.XD.fitgain.model.Busines
 import com.XD.fitgain.model.Promo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,7 +33,11 @@ class Cupons : Fragment(), RecyclerPromoAdapter.OnItemClickListener {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentCuponsBinding.inflate(inflater, container, true)
+
+        //Optenemos la informacion del usaurio actual
         getUserData()
+
+        //Init Recycler view
         binding.recyclerViewCupons.layoutManager = LinearLayoutManager(context)
         binding.recyclerViewCupons.adapter = promoAdapter
 
@@ -58,6 +61,7 @@ class Cupons : Fragment(), RecyclerPromoAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(promo: Promo) {
+        //Al darle clic a una promo me muestra el mensaje de gracias por adquirir
         AlertDialogUtility.alertDialog(
             requireContext(),
             "!Gracias por adquirir ${promo.titulo}!",
@@ -66,6 +70,7 @@ class Cupons : Fragment(), RecyclerPromoAdapter.OnItemClickListener {
     }
 
     private fun getUserData() {
+        //Consulta a la base de datos el usuario actual logeado
         firebaseFirestore
             .collection("Usuarios")
             .document(auth.currentUser!!.uid.trim())
@@ -90,6 +95,7 @@ class Cupons : Fragment(), RecyclerPromoAdapter.OnItemClickListener {
     }
 
     private fun performSearch(searchParam: String) {
+        //Inicia el proceso de filtrado mediante la string proporcionada
         promoAdapter.promoListItems = cuponsList
         promoAdapter.promoListItems=promoAdapter.promoListItems.filter { s -> s.titulo.contains(searchParam) }
         promoAdapter.notifyDataSetChanged()

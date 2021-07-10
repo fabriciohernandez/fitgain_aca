@@ -2,6 +2,7 @@ package com.XD.fitgain.views
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -49,7 +50,11 @@ class Business : AppCompatActivity(), RecyclerPromoAdapter.OnItemClickListener {
             finish()
         }
 
+
         getDataFromIntent()
+        binding.btnMapView.setOnClickListener{
+            onMapViewClick(busines);
+        }
 
         //Load data from firestore
         loadData()
@@ -152,5 +157,10 @@ class Business : AppCompatActivity(), RecyclerPromoAdapter.OnItemClickListener {
                 Log.d(TAG, "Error: ${it.exception!!.message}")
             }
         }
+    }
+    fun onMapViewClick(busines: Busines) {
+        val intent = Intent(this, MapViewActivity::class.java)
+        intent.putExtra("Busines", busines)
+        startActivity(intent)
     }
 }
