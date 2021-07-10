@@ -22,7 +22,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="24dp"
                 android:fontFamily="@font/poppins_semibold"
-                android:text="Cupones cajeados"
+                android:text="Cupones canjeados"
                 android:textColor="@android:color/black"
                 android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"

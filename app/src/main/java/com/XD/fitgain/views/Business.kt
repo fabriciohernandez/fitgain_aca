@@ -69,7 +69,7 @@ class Business : AppCompatActivity(), RecyclerPromoAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(promo: Promo) {
-        TODO("Not yet implemented")
+        Log.d(TAG, "Not implemented.")
     }
 
     private fun loadData() {
