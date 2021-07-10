@@ -1,5 +1,6 @@
 package com.XD.fitgain.views.fragments
 
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -31,6 +32,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.tapadoo.alerter.Alerter
+import kotlinx.android.synthetic.main.fragment_log_in.*
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -66,6 +68,7 @@ class LogIn : Fragment() {
                     .setBackgroundColorRes(R.color.alert_default_error_background)
                     .show()
             } else {
+                progressBarMenu?.visibility = View.VISIBLE
                 performLogin()
             }
 
@@ -180,7 +183,6 @@ class LogIn : Fragment() {
                     updateUI(null)
                 }
             }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -252,8 +254,9 @@ class LogIn : Fragment() {
 
     private fun updateUI(user: FirebaseUser?) {
         if (user != null) {
+            progressBarMenu?.visibility = View.GONE
             startActivity(Intent(activity, NavigationContainerHome::class.java))
         }
-
+        progressBarMenu?.visibility = View.GONE
     }
 }
