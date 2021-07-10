@@ -52,15 +52,14 @@ class MapViewActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsList
 
     private lateinit var busines: Busines
     private lateinit var binding: ActivityBusinessBinding
-
+    //Variables for the cuurent royte generated, and the object that draws the line on the map
     private var currentRoute: DirectionsRoute? = null
     private var navigationMapRoute: NavigationMapRoute? = null
 
-
+    //Point objects of the device and the destination point.
     lateinit var originPoint: Point
     lateinit var destinationPoint: Point
 
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,7 +75,6 @@ class MapViewActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsList
 
 
         binding = ActivityBusinessBinding.inflate(layoutInflater)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
 
@@ -97,6 +95,7 @@ class MapViewActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsList
     }
 
     private fun addDestinationIconSymbolLayer(it: Style) {
+        //Add icon according to the category of the business
         if(busines.categoria == "Tecnologia") {
             val drawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_laptop_screen, null)
             val bitmapUtils = BitmapUtils.getBitmapFromDrawable(drawable)
@@ -113,6 +112,7 @@ class MapViewActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsList
                 bitmapUtils!!
             )
         }
+        //Add the componerts to the GeoJSON source
         var geoJsonSource: GeoJsonSource = GeoJsonSource("destination-source-id")
         it.addSource(geoJsonSource)
 
@@ -129,6 +129,8 @@ class MapViewActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsList
         )
         it.addLayer(destinationSymbolLayer)
         destinationPoint = Point.fromLngLat(busines.longitud.toDouble(), busines.latitud.toDouble())
+
+        //Adding the GeoJSON point to the map and animate the camera to the point location
         val source = map!!.style!!.getSourceAs<GeoJsonSource>("destination-source-id")
         source?.setGeoJson(Feature.fromGeometry(destinationPoint))
         map!!.animateCamera(
@@ -141,6 +143,7 @@ class MapViewActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsList
     }
 
     private fun getRoute(originPoint: Point, destinationPoint: Point) {
+        //Request route to the MapBox API generator route and saving to current route
         NavigationRoute.builder(this)
             .accessToken(Mapbox.getAccessToken()!!)
             .origin(originPoint)
@@ -253,6 +256,7 @@ class MapViewActivity : AppCompatActivity(), OnMapReadyCallback, PermissionsList
     }
 
     fun btnRouteClick(v: View) {
+        //Obtain the cuurent location of the device, generate the route and moving the camera to the origin point
         originPoint = Point.fromLngLat(
             map.locationComponent!!.lastKnownLocation!!.longitude,
             map.locationComponent!!.lastKnownLocation!!.latitude
